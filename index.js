@@ -1,5 +1,5 @@
 const Gpio = require("onoff").Gpio;
-const proximity = new Gpio(4, "out");
+const proximity = new Gpio(4, "in", "rising");
 
 try {
   var timer = startTimer();
