@@ -14,8 +14,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@abandonware/noble": "1.9.2-5",
     "debug": "4.1.1",
-    "noble": "1.9.1",
     "onoff": "5.0.0"
   },
   "prettier": {
