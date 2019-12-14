@@ -1,5 +1,15 @@
 // import { Gpio } from 'onoff'
 import Timer from './timer'
+import Bluetooth from './bluetooth'
+
+const bluetooth = new Bluetooth()
+bluetooth.on('add', peripheral => {
+  // console.log(peripheral)
+})
+bluetooth.once('ready', () => {
+  // console.log('BLE READY')
+  bluetooth.start()
+})
 
 // const proximity = new Gpio(4, 'in', 'rising')
 const PROXIMITY_TIMEOUT = 10000

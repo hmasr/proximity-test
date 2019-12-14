@@ -1,36 +1,72 @@
-import noble from 'noble'
+import * as noble from 'noble'
+import { EventEmitter } from 'events'
+import { StateMachine, IStateMachineDescription, StateTransition } from 'ts-fence'
+import debug from 'debug'
+
+const log = debug('bluetooth')
+
+interface BluetoothStateMachineDescription extends IStateMachineDescription {
+  isAvailable: boolean
+  ble: Bluetooth
+}
+
+function createStateMachine(ble: Bluetooth): StateMachine {
+  return new StateMachine({
+    ble,
+    isAvailable: false,
+    [StateMachine.STARTING_STATE]: 'off',
+    [StateMachine.STATES]: {
+      off: {
+        poweredOn: new StateTransition(
+          'ready',
+          ({ scope }: { scope: BluetoothStateMachineDescription }) => {
+            log('poweredOn')
+          }
+        )
+      },
+      ready: {
+        [StateMachine.ON_ENTRY_FROM]: {
+          off({
+            scope,
+            stateMachine
+          }: {
+            scope: BluetoothStateMachineDescription
+            stateMachine: any
+          }) {
+            log('ON_ENTRY_FROM off')
+            stateMachine.scan()
+          }
+        },
+        scan: new StateTransition('scanning', (): any => log('scan')),
+        poweredOff: new StateTransition('off', (): any => undefined)
+      },
+      scanning: {
+        [StateMachine.ON_ENTER]: ({ scope }: { scope: BluetoothStateMachineDescription }) => {
+          scope.ble.start()
+        },
+        poweredOff: new StateTransition('off', (): any => undefined),
+        [StateMachine.ON_EXIT]: () => noble.stopScanning()
+      },
+      connected: {}
+    }
+  } as BluetoothStateMachineDescription)
+}
+
+export interface IBluetoothScanOptions {
+  serviceUUIDs: Array<string>
+  allowDuplicates: boolean
+}
 
 export interface IBluetooth {
   peripherals: Array<noble.Peripheral>
   isAvailable: boolean
+  options: IBluetoothScanOptions
+
+  start(): void
+  stop(): void
 }
 
-export default class Bluetooth implements IBluetooth {
-  public peripherals: noble.Peripheral[] = []
-  public isAvailable: boolean = false
-
-  constructor() {
-    noble.on('stateChange', this._onStateChange)
-    noble.on('discover', this._onPeripheralDiscovered)
-  }
-
-  private _onStateChange(state: string): void {
-    if (state === 'poweredOn') {
-      noble.startScanning()
-    } else {
-      noble.stopScanning()
-    }
-  }
-
-  private _onPeripheralDiscovered(peripheral: noble.Peripheral): void {
-    if (this.peripherals.find(o => o.id === peripheral.id)) {
-      return
-    }
-    this.peripherals.push(peripheral)
-  }
-}
-
-noble.on('discover', function(peripheral: noble.Peripheral) {
+function Log(peripheral: noble.Peripheral) {
   console.log(
     'peripheral discovered (' +
       peripheral.id +
@@ -73,4 +109,100 @@ noble.on('discover', function(peripheral: noble.Peripheral) {
   }
 
   console.log()
-})
+}
+
+const RSSI_THRESHOLD = -70
+
+export default class Bluetooth extends EventEmitter implements IBluetooth {
+  private _intervalId: number
+  private _lastSeen: Map<string, Date> = new Map()
+  private _stateMachine: StateMachine
+  public peripherals: Array<noble.Peripheral> = []
+  public isAvailable: boolean = false
+  public options: IBluetoothScanOptions = { serviceUUIDs: [], allowDuplicates: true }
+
+  constructor(timeout: number = 5000) {
+    super()
+    this._stateMachine = createStateMachine(this)
+    const self = this
+    noble.on('stateChange', (state: string) => {
+      log(`noble state=${state}`)
+      self._onStateChange.call(this, { ble: self }, state)
+    })
+    noble.on('warning', (warning: string) => {
+      log(warning)
+    })
+    noble.on('discover', (peripheral: noble.Peripheral) => {
+      log(`noble discover=${peripheral}`)
+      self._onPeripheralDiscovered.call(this, { ble: self }, peripheral)
+    })
+
+    this._intervalId = 0
+    // this._intervalId = setInterval(() => self._onInterval(timeout), timeout / 2)
+  }
+
+  private _onInterval(timeout: number): void {
+    log('onInterval')
+    for (const [id, datetime] of this._lastSeen) {
+      const time = datetime.getTime()
+      const now = Date.now()
+      const diff = now - timeout
+
+      if (time < diff) {
+        this._lastSeen.delete(id)
+        let index = -1
+        const peripheral = this.peripherals.find((p, i, _) => {
+          if (p.id === id) {
+            index = i
+            return true
+          }
+          return false
+        })
+
+        this.peripherals.splice(index, 1)
+        log(`REMOVE id=${id} ble.peripherals.length=${this.peripherals.length}`)
+        this.emit('remove', peripheral)
+      }
+    }
+  }
+
+  private _onStateChange({ ble }: { ble: Bluetooth }, state: string): void {
+    log(`_onStateChange state=${state}`)
+    if (state === 'poweredOn') {
+      this._stateMachine.poweredOn()
+    } else {
+      this._stateMachine.poweredOff()
+    }
+  }
+
+  private _onPeripheralDiscovered({ ble }: { ble: Bluetooth }, peripheral: noble.Peripheral): void {
+    if (peripheral.rssi < RSSI_THRESHOLD) {
+      return
+    }
+
+    // Log(peripheral)
+
+    if (!ble._lastSeen.has(peripheral.id)) {
+      // New ble device discovered
+      ble.peripherals.push(peripheral)
+      log(`ADD id=${peripheral.id} ble.peripherals.length=${ble.peripherals.length}`)
+      ble.emit('add', peripheral)
+    }
+
+    console.log(`id=${peripheral.id} rssi=${peripheral.rssi}`)
+    ble._lastSeen.set(peripheral.id, new Date())
+  }
+
+  public start(): void {
+    noble.startScanning(this.options.serviceUUIDs, this.options.allowDuplicates, error => {
+      if (error) {
+        console.error(error)
+      }
+    })
+  }
+
+  public stop(): void {
+    log('stop')
+    noble.stopScanning()
+  }
+}
