@@ -1,4 +1,4 @@
-import * as noble from 'noble'
+import * as noble from '@abandonware/noble'
 import { EventEmitter } from 'events'
 import { StateMachine, IStateMachineDescription, StateTransition } from 'ts-fence'
 import debug from 'debug'
