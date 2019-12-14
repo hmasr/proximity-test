@@ -14,8 +14,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "noble": "^1.9.1",
-    "onoff": "^4.1.2"
+    "debug": "4.1.1",
+    "noble": "1.9.1",
+    "onoff": "5.0.0"
   },
   "prettier": {
     "semi": false,
@@ -26,15 +27,16 @@
     "url": "https://github.com/hmasr/proximity-test.git"
   },
   "devDependencies": {
+    "@types/debug": "4.1.5",
     "@types/noble": "0.0.39",
     "@types/node": "^12.7.2",
-    "prettier": "^1.18.2",
+    "prettier": "1.19.1",
     "rimraf": "^3.0.0",
-    "ts-fence": "^1.0.2",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
+    "ts-fence": "1.2.1",
+    "ts-node": "8.5.3",
+    "tslint": "5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.5.3"
+    "typescript": "3.7.2"
   }
 }
