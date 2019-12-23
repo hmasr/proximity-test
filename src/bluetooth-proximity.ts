@@ -7,10 +7,10 @@ const log = debug('bluetooth')
 
 interface BluetoothStateMachineDescription extends IStateMachineDescription {
   isAvailable: boolean
-  ble: Bluetooth
+  ble: BluetoothProximity
 }
 
-function createStateMachine(ble: Bluetooth): StateMachine {
+function createStateMachine(ble: BluetoothProximity): StateMachine {
   return new StateMachine({
     ble,
     isAvailable: false,
@@ -75,7 +75,7 @@ export interface IBluetooth {
 
 const RSSI_THRESHOLD = -70
 
-export default class Bluetooth extends EventEmitter implements IBluetooth {
+export default class BluetoothProximity extends EventEmitter implements IBluetooth {
   private _intervalId: number
   private _lastSeen: Map<string, Date> = new Map()
   private _stateMachine: StateMachine
@@ -129,7 +129,10 @@ export default class Bluetooth extends EventEmitter implements IBluetooth {
     }
   }
 
-  private _onPeripheralDiscovered({ ble }: { ble: Bluetooth }, device: BluetoothDevice): void {
+  private _onPeripheralDiscovered(
+    { ble }: { ble: BluetoothProximity },
+    device: BluetoothDevice
+  ): void {
     // if (device.rssi < RSSI_THRESHOLD) {
     //   return
     // }
