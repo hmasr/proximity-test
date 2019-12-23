@@ -1,39 +1,24 @@
 // import { Gpio } from 'onoff'
-import Timer from './timer'
-import Bluetooth from './bluetooth'
+import SignalProximity from './gpio-proximity'
+import BluetoothProximity from './bluetooth-proximity'
 
-const bluetooth = new Bluetooth()
-bluetooth.on('add', peripheral => {
-  // console.log(peripheral)
-})
-bluetooth.once('ready', () => {
-  // console.log('BLE READY')
+export namespace Proximity {
+  const bluetooth = new BluetoothProximity()
+  bluetooth.on('add', peripheral => {
+    // console.log(peripheral)
+  })
+  bluetooth.once('ready', () => {
+    // console.log('BLE READY')
+  })
+
   bluetooth.start()
-})
 
-// const proximity = new Gpio(4, 'in', 'rising')
-const PROXIMITY_TIMEOUT = 10000
+  // const gpio_4 = new Gpio(4, 'in', 'rising')
 
-// const timer = new Timer(PROXIMITY_TIMEOUT)
-// timer.elapsed = function() {
-//   console.log('timer elapsed')
-// }
-// timer.start()
+  // const signalProximity = new SignalProximity(gpio_4)
+  // signalProximity.start()
 
-// proximity.watch((err, value) => {
-//   try {
-//     if (err) {
-//       console.log(err)
-//       throw err
-//     }
-//     console.log(`Watch = ${value}`)
-
-//     timer.restart()
-//   } catch (error) {
-//     console.error(error)
-//   }
-// })
-
-// process.on('SIGINT', () => {
-//   proximity.unexport()
-// })
+  // process.on('SIGINT', () => {
+  //   signalProximity.stop()
+  // })
+}
