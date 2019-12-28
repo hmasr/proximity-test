@@ -1,4 +1,4 @@
-// import { Gpio } from 'onoff'
+import { Gpio } from 'onoff'
 import SignalProximity from './gpio-proximity'
 import BluetoothProximity from './bluetooth-proximity'
 
