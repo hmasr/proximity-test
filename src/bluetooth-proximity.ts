@@ -7,12 +7,12 @@ const debug = Debug('bluetooth')
 
 interface BluetoothStateMachineDescription extends IStateMachineDescription {
   isAvailable: boolean
-  ble: BluetoothProximity
+  bluetooth: BluetoothProximity
 }
 
-function createStateMachine(ble: BluetoothProximity): StateMachine {
+function createStateMachine(bluetooth: BluetoothProximity): StateMachine {
   return new StateMachine({
-    ble,
+    bluetooth,
     isAvailable: false,
     [StateMachine.STARTING_STATE]: 'off',
     [StateMachine.STATES]: {
@@ -42,11 +42,11 @@ function createStateMachine(ble: BluetoothProximity): StateMachine {
       },
       scanning: {
         [StateMachine.ON_ENTER]: ({ scope }: { scope: BluetoothStateMachineDescription }) => {
-          scope.ble.start()
+          scope.bluetooth.start()
         },
         poweredOff: new StateTransition('off', (): any => undefined),
         [StateMachine.ON_EXIT]: ({ scope }: { scope: BluetoothStateMachineDescription }) => {
-          scope.ble.stop()
+          scope.bluetooth.stop()
         }
       },
       connected: {}
@@ -86,13 +86,12 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
 
   constructor(timeout: number = 5000) {
     super()
-
     this._stateMachine = createStateMachine(this)
 
     this._bluetoothSerialPort = new BluetoothSerialPort()
-    this._bluetoothSerialPort.on('found', (address: string, name: string) => {
-      debug(`new device address=${address} name=${name}`)
-    })
+    this._bluetoothSerialPort.on('found', (address: string, name: string) =>
+      this._onBluetoothDeviceDiscovered({ address, name } as BluetoothDevice)
+    )
     this._bluetoothSerialPort.on('close', () => {
       debug('Connection closed')
     })
@@ -129,22 +128,23 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
     }
   }
 
-  private _onPeripheralDiscovered(
-    { ble }: { ble: BluetoothProximity },
-    device: BluetoothDevice
-  ): void {
+  private _onBluetoothDeviceDiscovered(device: BluetoothDevice): void {
     // if (device.rssi < RSSI_THRESHOLD) {
     //   return
     // }
 
-    if (!ble._lastSeen.has(device.address)) {
+    if (!this._lastSeen.has(device.address)) {
       // New ble device discovered
-      ble.devices.push(device)
-      debug(`ADD id=${device.address} ble.peripherals.length=${ble.devices.length}`)
-      ble.emit('add', device)
+      this.devices.push(device)
+      debug(
+        `ADD address=${device.address} name=${device.name} devices.length=${this.devices.length}`
+      )
+      this.emit('add', device)
     }
 
-    ble._lastSeen.set(device.address, new Date())
+    const date = new Date()
+    debug(`UPDATE address=${device.address} name=${device.name} date=${date.toISOString()}`)
+    this._lastSeen.set(device.address, date)
   }
 
   public start(): void {
