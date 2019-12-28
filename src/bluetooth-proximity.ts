@@ -1,9 +1,9 @@
 import { BluetoothSerialPort } from 'bluetooth-serial-port'
 import { EventEmitter } from 'events'
 import { StateMachine, IStateMachineDescription, StateTransition } from 'ts-fence'
-import debug from 'debug'
+import Debug from 'debug'
 
-const log = debug('bluetooth')
+const debug = Debug('bluetooth')
 
 interface BluetoothStateMachineDescription extends IStateMachineDescription {
   isAvailable: boolean
@@ -20,7 +20,7 @@ function createStateMachine(ble: BluetoothProximity): StateMachine {
         poweredOn: new StateTransition(
           'ready',
           ({ scope }: { scope: BluetoothStateMachineDescription }) => {
-            log('poweredOn')
+            debug('poweredOn')
           }
         )
       },
@@ -33,11 +33,11 @@ function createStateMachine(ble: BluetoothProximity): StateMachine {
             scope: BluetoothStateMachineDescription
             stateMachine: any
           }) {
-            log('ON_ENTRY_FROM off')
+            debug('ON_ENTRY_FROM off')
             stateMachine.scan()
           }
         },
-        scan: new StateTransition('scanning', (): any => log('scan')),
+        scan: new StateTransition('scanning', (): any => debug('scan')),
         poweredOff: new StateTransition('off', (): any => undefined)
       },
       scanning: {
@@ -91,13 +91,13 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
 
     this._bluetoothSerialPort = new BluetoothSerialPort()
     this._bluetoothSerialPort.on('found', (address: string, name: string) => {
-      log(`new device address=${address} name=${name}`)
+      debug(`new device address=${address} name=${name}`)
     })
     this._bluetoothSerialPort.on('close', () => {
-      log('Connection closed')
+      debug('Connection closed')
     })
     this._bluetoothSerialPort.on('finished', () => {
-      log('Connection finished')
+      debug('Connection finished')
     })
 
     this._intervalId = 0
@@ -105,7 +105,7 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
   }
 
   private _onInterval(timeout: number): void {
-    log('onInterval')
+    debug('onInterval')
     for (const [id, datetime] of this._lastSeen) {
       const time = datetime.getTime()
       const now = Date.now()
@@ -123,7 +123,7 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
         })
 
         this.devices.splice(index, 1)
-        log(`REMOVE id=${id} ble.peripherals.length=${this.devices.length}`)
+        debug(`REMOVE id=${id} ble.peripherals.length=${this.devices.length}`)
         this.emit('remove', peripheral)
       }
     }
@@ -140,7 +140,7 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
     if (!ble._lastSeen.has(device.address)) {
       // New ble device discovered
       ble.devices.push(device)
-      log(`ADD id=${device.address} ble.peripherals.length=${ble.devices.length}`)
+      debug(`ADD id=${device.address} ble.peripherals.length=${ble.devices.length}`)
       ble.emit('add', device)
     }
 
@@ -148,11 +148,11 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
   }
 
   public start(): void {
-    log('start')
+    debug('start')
     this._bluetoothSerialPort.inquireSync()
   }
 
   public stop(): void {
-    log('stop')
+    debug('stop')
   }
 }
