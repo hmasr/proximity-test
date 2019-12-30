@@ -10,9 +10,9 @@ export namespace Proximity {
 
   bluetooth.start()
 
-  const gpio_4 = new Gpio(4, 'in', 'rising')
+  const gpio4 = new Gpio(4, 'in', 'both')
 
-  const signalProximity = new SignalProximity(gpio_4)
+  const signalProximity = new SignalProximity(gpio4)
   signalProximity.start()
 
   process.on('SIGINT', () => {

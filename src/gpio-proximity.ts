@@ -13,21 +13,17 @@ export default class SignalProximity extends EventEmitter {
     this.timer.elapsed = function() {
       console.log('timer elapsed')
     }
+    this._onGpioWatch(null, this.gpio.readSync())
     this.gpio.watch(this._onGpioWatch.bind(this))
   }
 
   private _onGpioWatch(err: Error | null | undefined, value: BinaryValue) {
-    try {
-      if (err) {
-        console.log(err)
-        throw err
-      }
-      console.log(`Watch = ${value}`)
-
-      this.timer.restart()
-    } catch (error) {
-      console.error(error)
+    if (err) {
+      console.error(err)
+      return
     }
+
+    this.timer.restart()
   }
 
   public start() {
@@ -35,6 +31,7 @@ export default class SignalProximity extends EventEmitter {
   }
 
   public stop() {
+    this.timer.stop()
     this.gpio.unexport()
   }
 }
