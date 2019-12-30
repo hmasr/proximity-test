@@ -13,7 +13,12 @@ export namespace Proximity {
   const gpio4 = new Gpio(4, 'in', 'both')
 
   const signalProximity = new SignalProximity(gpio4)
-  signalProximity.start()
+  signalProximity.on('begin', function() {
+    console.log('Turn display ON')
+  })
+  signalProximity.on('end', function() {
+    console.log('Turn display OFF')
+  })
 
   process.on('SIGINT', () => {
     signalProximity.stop()

@@ -8,14 +8,18 @@ const debug = Debug('signal')
 export default class SignalProximity extends EventEmitter {
   private readonly timer: Timer
   private readonly gpio: Gpio
+  public isTriggered: boolean = false
 
   constructor(gpio: Gpio, timeout: number = 10000) {
     super()
 
+    const self = this
     this.gpio = gpio
     this.timer = new Timer(timeout)
     this.timer.elapsed = function() {
       debug('timer elapsed')
+      self.isTriggered = false
+      self.emit('end')
     }
     this._onGpioWatch(null, this.gpio.readSync())
     this.gpio.watch(this._onGpioWatch.bind(this))
@@ -27,13 +31,13 @@ export default class SignalProximity extends EventEmitter {
       return
     }
 
+    this.emit('change')
     debug(`GPIO=${value}`)
+    if (!this.isTriggered) {
+      this.emit('begin')
+    }
+    this.isTriggered = true
     this.timer.restart()
-  }
-
-  public start() {
-    debug('start')
-    this.timer.start()
   }
 
   public stop() {
