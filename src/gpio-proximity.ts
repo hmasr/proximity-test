@@ -33,11 +33,13 @@ export default class SignalProximity extends EventEmitter {
 
     this.emit('change')
     debug(`GPIO=${value}`)
-    if (!this.isTriggered) {
+    if (value === 1) {
       this.emit('begin')
+      this.isTriggered = true
+      this.timer.stop()
+    } else {
+      this.timer.start()
     }
-    this.isTriggered = true
-    this.timer.restart()
   }
 
   public stop() {
