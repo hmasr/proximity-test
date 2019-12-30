@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/src/index.ts",
-      "env": { "DEBUG": "bluetooth,noble,gap,hci", "NOBLE_REPORT_ALL_HCI_EVENTS": "1" },
+      "env": { "DEBUG": "bluetooth" },
       "preLaunchTask": "npm: build",
       "sourceMaps": true,
       "smartStep": true,
