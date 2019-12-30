@@ -149,7 +149,7 @@ export default class BluetoothProximity extends EventEmitter implements IBluetoo
 
   public start(): void {
     debug('start')
-    this._bluetoothSerialPort.inquireSync()
+    this._bluetoothSerialPort.inquire()
   }
 
   public stop(): void {
