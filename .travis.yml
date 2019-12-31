@@ -6,7 +6,6 @@ cache:
 
 os:
   - linux
-  - osx
 
 notifications:
   email: false
