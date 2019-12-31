@@ -1,6 +1,6 @@
 {
   "name": "node-pi-proximity",
-  "version": "0.0.0-semantic-release",
+  "version": "1.0.0",
   "description": "Nodejs Raspberry Pi proximity helper classes in Typescript",
   "license": "MIT",
   "main": "dist/lib/",
