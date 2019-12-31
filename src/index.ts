@@ -1,4 +1,4 @@
-import SignalProximity from '../src/gpio-proximity'
-import BluetoothProximity from '../src/bluetooth-proximity'
+import SignalProximity from './signal-proximity'
+import BluetoothProximity from './bluetooth-proximity'
 
 export { SignalProximity, BluetoothProximity }
