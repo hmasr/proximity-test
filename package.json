@@ -1,7 +1,7 @@
 {
   "name": "node-pi-proximity",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0-semantic-release",
+  "description": "Nodejs Raspberry Pi proximity helper classes in Typescript",
   "license": "MIT",
   "main": "dist/lib/",
   "types": "dist/types/",
@@ -9,12 +9,18 @@
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "travis-deploy-once": "travis-deploy-once"
   },
   "author": {
     "name": "Thomas Reynders",
     "url": "https://github.com/ovaar"
   },
+  "keywords": [
+    "proximity",
+    "typescript",
+    "raspberrypi"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ovaar/node-pi-proximity.git"
@@ -25,10 +31,16 @@
     "onoff": "5.0.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "3.0.6",
+    "@semantic-release/commit-analyzer": "6.3.3",
+    "@semantic-release/git": "7.0.18",
+    "@semantic-release/npm": "5.3.5",
+    "@semantic-release/release-notes-generator": "7.3.5",
     "@types/debug": "4.1.5",
     "@types/node": "12.7.2",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
+    "semantic-release": "15.14.0",
     "ts-fence": "1.2.1",
     "ts-node": "8.5.4",
     "tslint": "5.20.1",

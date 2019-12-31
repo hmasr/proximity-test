@@ -1,0 +1,29 @@
+language: node_js
+cache:
+  directories:
+    - ~/.npm
+
+notifications:
+  email: false
+
+node_js:
+  - 'node'
+  - '10'
+  - '12'
+  - '8'
+
+script: echo "Building against $(node -v) ..."
+
+jobs:
+  include:
+    - stage: release
+      node_js: lts/*
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: npm run build && npx semantic-release
+        on:
+          branch: master
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
