@@ -12,13 +12,14 @@ notifications:
   email: false
 
 node_js:
-  - 'node'
-  - '10'
   - '12'
+  - '10'
   - '8'
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - libbluetooth-dev
 
@@ -27,7 +28,7 @@ script: echo "Building against $(node -v) ..."
 jobs:
   include:
     - stage: release
-      node_js: lts/*
+      node_js: '12'
       deploy:
         provider: script
         skip_cleanup: true
