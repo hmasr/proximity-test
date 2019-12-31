@@ -1,12 +1,11 @@
 {
-  "name": "gpio-test",
-  "version": "0.0.0-development",
+  "name": "node-pi-proximity",
+  "version": "1.0.0",
   "description": "",
   "license": "MIT",
   "main": "dist/lib/",
   "types": "dist/types/",
   "scripts": {
-    "start": "ts-node src/",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -24,7 +23,7 @@
     "bluetooth-serial-port": "2.2.6",
     "debug": "4.1.1",
     "dotenv": "8.2.0",
-    "onoff": "5.0.0"
+    "onoff": "5.0.1"
   },
   "devDependencies": {
     "@types/debug": "4.1.5",
@@ -33,11 +32,11 @@
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "ts-fence": "1.2.1",
-    "ts-node": "8.5.3",
+    "ts-node": "8.5.4",
     "tslint": "5.20.1",
     "tslint-config-prettier": "1.18.0",
     "tslint-config-standard": "8.0.1",
-    "typescript": "3.7.2"
+    "typescript": "3.7.4"
   },
   "prettier": {
     "semi": false,
