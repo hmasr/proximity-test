@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ovaar/proximity-test.git"
+    "url": "https://github.com/ovaar/node-pi-proximity.git"
   },
   "dependencies": {
     "bluetooth-serial-port": "2.2.6",
