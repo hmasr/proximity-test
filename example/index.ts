@@ -1,13 +1,9 @@
 import { Gpio } from 'onoff'
-import SignalProximity from '../src/gpio-proximity'
+import SignalProximity from '../src/signal-proximity'
 import BluetoothProximity from '../src/bluetooth-proximity'
 import { execSync } from 'child_process'
-import { config } from 'dotenv'
 
 export namespace Proximity {
-  // Load dotenv config file
-  config()
-
   const bluetooth = new BluetoothProximity()
   bluetooth.on('add', peripheral => {
     console.log(peripheral)

@@ -22,12 +22,10 @@
   "dependencies": {
     "bluetooth-serial-port": "2.2.6",
     "debug": "4.1.1",
-    "dotenv": "8.2.0",
     "onoff": "5.0.1"
   },
   "devDependencies": {
     "@types/debug": "4.1.5",
-    "@types/dotenv": "8.2.0",
     "@types/node": "12.7.2",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
