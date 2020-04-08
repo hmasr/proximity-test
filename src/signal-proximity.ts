@@ -31,8 +31,10 @@ export default class SignalProximity extends EventEmitter {
       return
     }
 
-    this.emit('change')
+    this.emit('change', value)
+
     debug(`GPIO=${value}`)
+
     if (value === 1) {
       this.emit('begin')
       this.isTriggered = true
