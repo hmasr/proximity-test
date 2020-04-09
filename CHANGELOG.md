@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ovaar/node-pi-proximity/compare/v1.0.0...v1.1.0) (2020-04-08)
+
+
+### Features
+
+* **Signal:** Add value to change event ([59f2f0a](https://github.com/ovaar/node-pi-proximity/commit/59f2f0a380f96b7d4958dfa402df1e3973d799aa))
+
 # 1.0.0 (2019-12-31)
 
 

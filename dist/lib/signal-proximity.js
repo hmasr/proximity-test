@@ -24,7 +24,7 @@ class SignalProximity extends events_1.EventEmitter {
             console.error(err);
             return;
         }
-        this.emit('change');
+        this.emit('change', value);
         debug(`GPIO=${value}`);
         if (value === 1) {
             this.emit('begin');
